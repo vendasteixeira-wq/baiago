@@ -108,16 +108,20 @@ h1 {
 }
 
 .hero p:not(.eyebrow),
-.panel-heading p {
+.panel-heading p,
+.section-heading p {
   color: #5d7280;
   margin-bottom: 0;
 }
 
 .hero-actions,
 .panel-heading,
+.section-heading,
 .arrival-row,
 .arrival-main span,
 .metric-card,
+.source-card,
+.signal-row,
 .progress-item > div:first-child {
   align-items: center;
   display: flex;
@@ -231,7 +235,7 @@ input {
   display: grid;
   gap: 18px;
   grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.8fr);
-  padding: 0 clamp(20px, 5vw, 64px) 40px;
+  padding: 0 clamp(20px, 5vw, 64px) 24px;
 }
 
 .panel {
@@ -360,6 +364,196 @@ input {
   width: 100%;
 }
 
+.social-radar {
+  padding: 0 clamp(20px, 5vw, 64px) 44px;
+}
+
+.section-heading {
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.section-heading h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.radar-summary {
+  background: #102331;
+  border-radius: 8px;
+  color: #fff;
+  flex: 0 0 190px;
+  padding: 18px;
+}
+
+.radar-summary strong {
+  display: block;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.radar-summary span,
+.radar-summary small {
+  display: block;
+}
+
+.radar-summary span {
+  margin-top: 6px;
+}
+
+.radar-summary small {
+  color: #9edbd7;
+  margin-top: 6px;
+}
+
+.social-layout {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.85fr);
+}
+
+.search-panel,
+.social-feed {
+  grid-column: 1 / -1;
+}
+
+.term-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.term-cloud button {
+  align-items: center;
+  background: #f5fbfa;
+  border: 1px solid #cde9e6;
+  border-radius: 999px;
+  color: #0c706a;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 800;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.source-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.source-card {
+  border: 1px solid #e8e0d4;
+  border-radius: 8px;
+  gap: 10px;
+  min-height: 76px;
+  padding: 12px;
+}
+
+.source-icon {
+  align-items: center;
+  background: #f0f6fb;
+  border-radius: 8px;
+  color: #0e6f9d;
+  display: grid;
+  flex: 0 0 38px;
+  height: 38px;
+  justify-items: center;
+}
+
+.source-card div:nth-child(2) {
+  display: grid;
+  flex: 1;
+  gap: 3px;
+  min-width: 0;
+}
+
+.source-card strong {
+  color: #102331;
+  font-size: 0.92rem;
+}
+
+.source-card span {
+  color: #5d7280;
+  font-size: 0.84rem;
+}
+
+.source-card small,
+.signal-score span {
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 6px 8px;
+  white-space: nowrap;
+}
+
+.live-dot {
+  background: #eaf8ef;
+  color: #147a43;
+}
+
+.pending-dot {
+  background: #fff1cf;
+  color: #946511;
+}
+
+.signal-list {
+  display: grid;
+  gap: 10px;
+}
+
+.signal-row {
+  border: 1px solid #e8e0d4;
+  border-radius: 8px;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 14px;
+}
+
+.signal-row > div:first-child {
+  min-width: 0;
+}
+
+.signal-row strong,
+.signal-row span,
+.signal-row p {
+  display: block;
+}
+
+.signal-row span {
+  color: #5d7280;
+  font-size: 0.86rem;
+  margin-top: 4px;
+}
+
+.signal-row p {
+  color: #173241;
+  font-weight: 800;
+  margin: 8px 0 0;
+}
+
+.signal-score {
+  min-width: 150px;
+  text-align: right;
+}
+
+.signal-score strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.45rem;
+}
+
+.signal-score span {
+  background: #eef7f6;
+  color: #0d776f;
+  display: inline-block;
+  margin-top: 7px;
+}
+
 @media (max-width: 900px) {
   .topnav {
     display: none;
@@ -376,8 +570,19 @@ input {
 
   .toolbar,
   .metric-grid,
-  .content-grid {
+  .content-grid,
+  .social-layout,
+  .source-grid {
     grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .radar-summary {
+    flex-basis: auto;
   }
 
   .arrival-row {
@@ -391,7 +596,8 @@ input {
   .hero,
   .toolbar,
   .metric-grid,
-  .content-grid {
+  .content-grid,
+  .social-radar {
     padding-left: 14px;
     padding-right: 14px;
   }
@@ -407,5 +613,15 @@ input {
 
   .arrival-time {
     flex-basis: 100%;
+  }
+
+  .signal-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .signal-score {
+    min-width: 0;
+    text-align: left;
   }
 }

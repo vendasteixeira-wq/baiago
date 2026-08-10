@@ -4,17 +4,34 @@ import {
   Car,
   Clock3,
   Download,
+  Facebook,
+  Hash,
+  Instagram,
   Hotel,
   MapPin,
+  MessageCircle,
   Plane,
   Plus,
+  RadioTower,
+  Search,
   ShipWheel,
+  Sparkles,
   UsersRound,
   Waves,
 } from "lucide-react";
 
 type ArrivalMode = "Aerea" | "Rodoviaria" | "Carro" | "Van";
 type TouristStatus = "Confirmado" | "Aguardando" | "Hospedado";
+type SocialSource =
+  | "WhatsApp Stories"
+  | "Instagram"
+  | "X"
+  | "Facebook"
+  | "Snapchat"
+  | "Kwai/Kway"
+  | "TikTok"
+  | "Influencers"
+  | "Threads";
 
 type TouristArrival = {
   id: number;
@@ -25,6 +42,17 @@ type TouristArrival = {
   status: TouristStatus;
   groupSize: number;
   hotel: string;
+};
+
+type SocialSignal = {
+  id: number;
+  source: SocialSource;
+  profile: string;
+  location: string;
+  term: string;
+  reach: number;
+  sentiment: "Alta intencao" | "Oportunidade" | "Acompanhar";
+  postedAt: string;
 };
 
 const arrivals: TouristArrival[] = [
@@ -80,6 +108,74 @@ const arrivals: TouristArrival[] = [
   },
 ];
 
+const monitoredTerms = [
+  "check in hotel em porto seguro",
+  "check in arraial dajuda",
+  "check in caraiva",
+  "check in praia do espelho",
+  "#PortoSeguro",
+  "#ArraialDAjuda",
+  "#Caraiva",
+  "#PraiaDoEspelho",
+  "#CostaDoDescobrimento",
+  "#FeriasNaBahia",
+];
+
+const socialSources = [
+  { name: "WhatsApp Stories", mentions: 41, icon: MessageCircle, active: true },
+  { name: "Instagram", mentions: 96, icon: Instagram, active: true },
+  { name: "X", mentions: 18, icon: Hash, active: true },
+  { name: "Facebook", mentions: 33, icon: Facebook, active: true },
+  { name: "Snapchat", mentions: 9, icon: Sparkles, active: false },
+  { name: "Kwai/Kway", mentions: 12, icon: RadioTower, active: false },
+  { name: "TikTok", mentions: 74, icon: RadioTower, active: true },
+  { name: "Influencers", mentions: 21, icon: UsersRound, active: true },
+  { name: "Threads", mentions: 16, icon: Hash, active: true },
+] satisfies Array<{ name: SocialSource; mentions: number; icon: typeof Instagram; active: boolean }>;
+
+const socialSignals: SocialSignal[] = [
+  {
+    id: 1,
+    source: "Instagram",
+    profile: "@viajandocomana",
+    location: "Porto Seguro",
+    term: "check in hotel em porto seguro",
+    reach: 18400,
+    sentiment: "Alta intencao",
+    postedAt: "ha 8 min",
+  },
+  {
+    id: 2,
+    source: "TikTok",
+    profile: "@rotadabahia",
+    location: "Arraial d'Ajuda",
+    term: "check in arraial dajuda",
+    reach: 32100,
+    sentiment: "Alta intencao",
+    postedAt: "ha 16 min",
+  },
+  {
+    id: 3,
+    source: "WhatsApp Stories",
+    profile: "Grupo receptivo sul",
+    location: "Caraiva",
+    term: "check in caraiva",
+    reach: 740,
+    sentiment: "Acompanhar",
+    postedAt: "ha 22 min",
+  },
+  {
+    id: 4,
+    source: "Influencers",
+    profile: "@nordestevip",
+    location: "Praia do Espelho",
+    term: "check in praia do espelho",
+    reach: 52800,
+    sentiment: "Oportunidade",
+    postedAt: "ha 41 min",
+  },
+];
+
 const modeConfig = {
   Aerea: {
     label: "Via Aerea",
@@ -128,6 +224,8 @@ export function App() {
   const waiting = arrivals
     .filter((arrival) => arrival.status === "Aguardando")
     .reduce((total, arrival) => total + arrival.groupSize, 0);
+  const totalSocialMentions = socialSources.reduce((total, source) => total + source.mentions, 0);
+  const activeSources = socialSources.filter((source) => source.active).length;
 
   const cards = [
     {
@@ -169,6 +267,7 @@ export function App() {
         <nav className="topnav" aria-label="Navegacao principal">
           <a href="#painel">Painel</a>
           <a href="#chegadas">Chegadas</a>
+          <a href="#radar-social">Radar Social</a>
           <a href="#operacao">Operacao</a>
         </nav>
       </header>
@@ -316,6 +415,100 @@ export function App() {
             </button>
           </form>
         </aside>
+      </section>
+
+      <section className="social-radar" id="radar-social">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Busca ativa</p>
+            <h2>Radar de postagens e check-ins</h2>
+            <p>
+              Monitoramento de sinais publicos e parceiros para captar demanda em redes sociais,
+              stories e perfis de influencia.
+            </p>
+          </div>
+          <div className="radar-summary" aria-label="Resumo do radar social">
+            <strong>{totalSocialMentions}</strong>
+            <span>mencoes rastreadas</span>
+            <small>{activeSources} fontes ativas</small>
+          </div>
+        </div>
+
+        <div className="social-layout">
+          <article className="panel search-panel">
+            <div className="panel-heading">
+              <div>
+                <h2>Termos monitorados</h2>
+                <p>Consultas prioritarias por destino, hotel e hashtag.</p>
+              </div>
+              <Search size={20} aria-hidden="true" />
+            </div>
+            <div className="term-cloud">
+              {monitoredTerms.map((term) => (
+                <button type="button" key={term}>
+                  {term.startsWith("#") ? <Hash size={14} aria-hidden="true" /> : <Search size={14} aria-hidden="true" />}
+                  {term}
+                </button>
+              ))}
+            </div>
+          </article>
+
+          <article className="panel">
+            <div className="panel-heading">
+              <div>
+                <h2>Fontes sociais</h2>
+                <p>Status de captura por canal.</p>
+              </div>
+              <RadioTower size={20} aria-hidden="true" />
+            </div>
+            <div className="source-grid">
+              {socialSources.map((source) => {
+                const Icon = source.icon;
+                return (
+                  <div className="source-card" key={source.name}>
+                    <div className="source-icon">
+                      <Icon size={18} aria-hidden="true" />
+                    </div>
+                    <div>
+                      <strong>{source.name}</strong>
+                      <span>{source.mentions} sinais</span>
+                    </div>
+                    <small className={source.active ? "live-dot" : "pending-dot"}>
+                      {source.active ? "Ativo" : "Pendente"}
+                    </small>
+                  </div>
+                );
+              })}
+            </div>
+          </article>
+
+          <article className="panel social-feed">
+            <div className="panel-heading">
+              <div>
+                <h2>Sinais recentes</h2>
+                <p>Possiveis turistas e oportunidades para abordagem.</p>
+              </div>
+              <Sparkles size={20} aria-hidden="true" />
+            </div>
+            <div className="signal-list">
+              {socialSignals.map((signal) => (
+                <div className="signal-row" key={signal.id}>
+                  <div>
+                    <strong>{signal.profile}</strong>
+                    <span>
+                      {signal.source} · {signal.location} · {signal.postedAt}
+                    </span>
+                    <p>{signal.term}</p>
+                  </div>
+                  <div className="signal-score">
+                    <strong>{Intl.NumberFormat("pt-BR").format(signal.reach)}</strong>
+                    <span>{signal.sentiment}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
       </section>
     </main>
   );
