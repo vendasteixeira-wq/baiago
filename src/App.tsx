@@ -167,10 +167,10 @@ export function App() {
       <section className="hero" id="inicio">
         <div className="hero-copy">
           <p className="eyebrow">Agencia de passeios online</p>
-          <h1>Praia do Espelho com vendedor, reserva e transporte conectados.</h1>
+          <h1>Passeio Praia do Espelho saindo de Porto Seguro e Trancoso.</h1>
           <p>
-            O vendedor captura o cliente, a plataforma calcula o sinal de 50% e a operacao recebe a
-            reserva ligada a rota e a Van 15.
+            Reserve online com a Baiago: atendimento pelo WhatsApp, sinal de 50%, rota Maion,
+            Tunait e Recanto, e transporte organizado com a Van 15.
           </p>
           <div className="hero-actions">
             <a className="primary-button" href="#reserva">
@@ -211,10 +211,10 @@ export function App() {
       <section className="tour-section" id="passeio">
         <div className="section-heading">
           <p className="eyebrow">Produto piloto</p>
-          <h2>Rota Praia do Espelho</h2>
+          <h2>Passeio Praia do Espelho, Bahia</h2>
           <p>
-            Primeiro circuito comercial da agencia: cliente {"->"} Antonio {"->"} reserva {"->"} passeio {"->"} Van
-            15 {"->"} Anderson.
+            Roteiro para turistas em Porto Seguro, Trancoso e Costa do Descobrimento: cliente
+            {" -> "} Antonio {" -> "} reserva {" -> "} passeio {" -> "} Van 15 {" -> "} Anderson.
           </p>
         </div>
         <div className="tour-grid">
@@ -222,7 +222,10 @@ export function App() {
             <div className="tour-image" />
             <div>
               <h3>Praia do Espelho</h3>
-              <p>Experiencia com rota Maion, Tunait e Recanto, pronta para venda por WhatsApp.</p>
+              <p>
+                Experiencia com rota Maion, Tunait e Recanto, pronta para reserva por WhatsApp e
+                ideal para turistas procurando passeio de praia na Bahia.
+              </p>
             </div>
           </article>
           <article className="rule-card">
