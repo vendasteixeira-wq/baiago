@@ -1,6 +1,16 @@
 # Baiago
 
-Painel de turismo para acompanhar chegadas, meios de transporte, status de recepcao e distribuicao operacional em Porto Seguro.
+Agencia online de passeios em Porto Seguro, com fluxo de vendedor, cliente, reserva, rota e transporte.
+
+## Regras do piloto
+
+- Passeio: Praia do Espelho.
+- Preco: R$ 120 por pessoa pagante.
+- Crianca abaixo de 6 anos: gratis.
+- Reserva: 50% de sinal.
+- Vendedor: Antonio Teixeira, WhatsApp (73) 99907-2178.
+- Veiculo: Van 15, Sprinter, motorista Anderson, WhatsApp (73) 99974-3707, placa OZC-9663.
+- Rota: Maion -> Tunait -> Recanto.
 
 ## Como rodar
 
