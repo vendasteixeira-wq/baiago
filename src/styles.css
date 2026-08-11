@@ -62,8 +62,11 @@ a {
   gap: 10px;
 }
 
-.brand svg {
-  color: #0f756e;
+.brand img {
+  display: block;
+  height: 36px;
+  width: 36px;
+  border-radius: 8px;
 }
 
 .topnav {

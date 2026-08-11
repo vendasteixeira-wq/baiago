@@ -8,7 +8,6 @@ import {
   Send,
   ShipWheel,
   UsersRound,
-  Waves,
 } from "lucide-react";
 
 const PRICE_PER_PERSON = 120;
@@ -167,8 +166,8 @@ export function App() {
     <main className="app-shell">
       <header className="topbar">
         <a className="brand" href="#inicio" aria-label="Baiago">
-          <Waves aria-hidden="true" />
-          <span>Baiago</span>
+          <img src="/logo-baiago-instagram.svg" alt="" aria-hidden="true" />
+          <span>Baiago Trip</span>
         </a>
         <nav className="topnav" aria-label="Navegacao principal">
           <a href="#passeio">Passeio</a>
