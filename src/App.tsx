@@ -13,6 +13,7 @@ import {
 
 const PRICE_PER_PERSON = 120;
 const DEPOSIT_RATE = 0.5;
+const VAN_CAPACITY = 15;
 
 const seller = {
   name: "Antonio Teixeira",
@@ -39,6 +40,7 @@ const currency = new Intl.NumberFormat("pt-BR", {
 type Reservation = {
   id: number;
   client: string;
+  saleType: "Pessoa" | "Casal" | "Familia";
   date: string;
   pickup: string;
   adults: number;
@@ -51,6 +53,7 @@ const initialReservations: Reservation[] = [
   {
     id: 1,
     client: "Familia Costa",
+    saleType: "Familia",
     date: "2026-08-12",
     pickup: "Hotel Orla Norte",
     adults: 2,
@@ -61,6 +64,7 @@ const initialReservations: Reservation[] = [
   {
     id: 2,
     client: "Casal Monteiro",
+    saleType: "Casal",
     date: "2026-08-13",
     pickup: "Praia de Taperapua",
     adults: 2,
@@ -95,6 +99,7 @@ export function App() {
   const [reservations, setReservations] = useState(initialReservations);
   const [form, setForm] = useState({
     client: "",
+    saleType: "Casal" as Reservation["saleType"],
     date: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
     pickup: "",
     adults: 2,
@@ -106,6 +111,7 @@ export function App() {
     () => ({
       id: Date.now(),
       client: form.client || "Cliente",
+      saleType: form.saleType,
       date: form.date,
       pickup: form.pickup || "Embarque a combinar",
       adults: Number(form.adults) || 0,
@@ -121,12 +127,15 @@ export function App() {
     .filter((reservation) => reservation.status === "Aguardando sinal")
     .reduce((sum, reservation) => sum + depositValue(reservation), 0);
   const passengers = reservations.reduce((sum, reservation) => sum + totalPassengers(reservation), 0);
+  const seatsAvailable = Math.max(0, VAN_CAPACITY - passengers);
   const confirmed = reservations.filter((reservation) => reservation.status === "Confirmada").length;
+  const draftExceedsCapacity = totalPassengers(draft) > VAN_CAPACITY;
 
   const proposal = [
     `Ola, ${draft.client}!`,
     "",
     "Segue sua proposta para o passeio Praia do Espelho:",
+    `Venda: ${draft.saleType}`,
     `Data: ${formatDate(draft.date)}`,
     `Embarque: ${draft.pickup}`,
     `Passageiros: ${totalPassengers(draft)}`,
@@ -137,7 +146,7 @@ export function App() {
     `Saldo restante: ${currency.format(totalValue(draft) - depositValue(draft))}`,
     "",
     `Vendedor: ${seller.name} - ${seller.whatsapp}`,
-    `Operacao: Van ${vehicle.number} ${vehicle.model}, motorista ${vehicle.driver}, placa ${vehicle.plate}`,
+    `Operacao: Van ${vehicle.number} ${vehicle.model}, ${VAN_CAPACITY} lugares, motorista ${vehicle.driver}, placa ${vehicle.plate}`,
   ].join("\n");
 
   function updateNumber(field: "adults" | "childrenPaid" | "childrenFree", value: string) {
@@ -145,9 +154,9 @@ export function App() {
   }
 
   function addReservation() {
-    if (!form.client.trim() || paidPassengers(draft) < 1) return;
+    if (!form.client.trim() || paidPassengers(draft) < 1 || draftExceedsCapacity) return;
     setReservations((current) => [{ ...draft, id: Date.now() }, ...current]);
-    setForm((current) => ({ ...current, client: "", pickup: "", adults: 2, childrenPaid: 0, childrenFree: 0 }));
+    setForm((current) => ({ ...current, client: "", pickup: "", saleType: "Casal", adults: 2, childrenPaid: 0, childrenFree: 0 }));
   }
 
   return (
@@ -169,8 +178,8 @@ export function App() {
           <p className="eyebrow">Agencia de passeios online</p>
           <h1>Passeio Praia do Espelho saindo de Porto Seguro e Trancoso.</h1>
           <p>
-            Reserve online com a Baiago: atendimento pelo WhatsApp, sinal de 50%, rota Maion,
-            Tunait e Recanto, e transporte organizado com a Van 15.
+            Reserve online com a Baiago: venda por pessoa, casal ou familia, sinal de 50%, rota
+            Maion, Tunait e Recanto, e transporte organizado com a Van 15 de 15 lugares.
           </p>
           <div className="hero-actions">
             <a className="primary-button" href="#reserva">
@@ -194,7 +203,7 @@ export function App() {
         <article className="metric-card">
           <span>Passageiros</span>
           <strong>{passengers}</strong>
-          <small>Pagantes e criancas gratis</small>
+          <small>{seatsAvailable} vagas livres na Van 15</small>
         </article>
         <article className="metric-card">
           <span>Vendas</span>
@@ -231,7 +240,8 @@ export function App() {
           <article className="rule-card">
             <h3>Regra comercial</h3>
             <p>
-              Adultos e criancas a partir de 6 anos pagam {currency.format(PRICE_PER_PERSON)}.
+              A venda pode ser individual, casal ou familia. O preco final continua por pessoa
+              pagante: adultos e criancas a partir de 6 anos pagam {currency.format(PRICE_PER_PERSON)}.
               Criancas abaixo de 6 anos nao pagam. O sinal de 50% confirma a reserva.
             </p>
             <div className="check-list">
@@ -239,10 +249,16 @@ export function App() {
                 <CheckCircle2 size={17} /> {currency.format(PRICE_PER_PERSON)} por pagante
               </span>
               <span>
+                <CheckCircle2 size={17} /> Venda por pessoa, casal ou familia
+              </span>
+              <span>
                 <CheckCircle2 size={17} /> Abaixo de 6 anos gratis
               </span>
               <span>
                 <CheckCircle2 size={17} /> 50% de sinal
+              </span>
+              <span>
+                <CheckCircle2 size={17} /> Van 15 com {VAN_CAPACITY} lugares
               </span>
             </div>
           </article>
@@ -263,6 +279,18 @@ export function App() {
             Nome do cliente
             <input value={form.client} onChange={(event) => setForm((current) => ({ ...current, client: event.target.value }))} />
           </label>
+          <div className="sale-type-group" aria-label="Tipo de venda">
+            {(["Pessoa", "Casal", "Familia"] as Reservation["saleType"][]).map((type) => (
+              <button
+                className={form.saleType === type ? "sale-type active" : "sale-type"}
+                key={type}
+                type="button"
+                onClick={() => setForm((current) => ({ ...current, saleType: type }))}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
           <label>
             Data do passeio
             <input type="date" value={form.date} onChange={(event) => setForm((current) => ({ ...current, date: event.target.value }))} />
@@ -285,7 +313,10 @@ export function App() {
               <input type="number" min={0} value={form.childrenFree} onChange={(event) => updateNumber("childrenFree", event.target.value)} />
             </label>
           </div>
-          <button className="primary-button full" type="button" onClick={addReservation}>
+          {draftExceedsCapacity && (
+            <p className="capacity-alert">Essa reserva passa dos {VAN_CAPACITY} lugares da Van 15.</p>
+          )}
+          <button className="primary-button full" type="button" onClick={addReservation} disabled={draftExceedsCapacity}>
             <Plus size={18} aria-hidden="true" />
             Salvar reserva
           </button>
@@ -301,6 +332,10 @@ export function App() {
           </div>
           <div className="summary-grid">
             <div>
+              <span>Tipo</span>
+              <strong>{draft.saleType}</strong>
+            </div>
+            <div>
               <span>Pagantes</span>
               <strong>{paidPassengers(draft)}</strong>
             </div>
@@ -315,6 +350,12 @@ export function App() {
             <div>
               <span>Saldo</span>
               <strong>{currency.format(totalValue(draft) - depositValue(draft))}</strong>
+            </div>
+            <div>
+              <span>Van 15</span>
+              <strong>
+                {totalPassengers(draft)}/{VAN_CAPACITY}
+              </strong>
             </div>
           </div>
           <a className="secondary-button full" href={`${seller.link}?text=${encodeURIComponent(proposal)}`} target="_blank" rel="noreferrer">
@@ -339,7 +380,7 @@ export function App() {
                 <div>
                   <strong>{reservation.client}</strong>
                   <span>
-                    {formatDate(reservation.date)} - {reservation.pickup}
+                    {reservation.saleType} - {formatDate(reservation.date)} - {reservation.pickup}
                   </span>
                 </div>
                 <div>
@@ -377,7 +418,7 @@ export function App() {
               <ShipWheel size={20} aria-hidden="true" />
               <span>Van 15</span>
               <strong>
-                {vehicle.model} - {vehicle.plate}
+                {vehicle.model} - {vehicle.plate} - {VAN_CAPACITY} lugares
               </strong>
               <a href={vehicle.link} target="_blank" rel="noreferrer">
                 {vehicle.driver} - {vehicle.whatsapp}

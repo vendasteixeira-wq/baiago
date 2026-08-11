@@ -6,10 +6,11 @@ Agencia online de passeios em Porto Seguro, com fluxo de vendedor, cliente, rese
 
 - Passeio: Praia do Espelho.
 - Preco: R$ 120 por pessoa pagante.
+- Tipo de venda: por pessoa, casal ou familia.
 - Crianca abaixo de 6 anos: gratis.
 - Reserva: 50% de sinal.
 - Vendedor: Antonio Teixeira, WhatsApp (73) 99907-2178.
-- Veiculo: Van 15, Sprinter, motorista Anderson, WhatsApp (73) 99974-3707, placa OZC-9663.
+- Veiculo: Van 15, Sprinter, 15 lugares, motorista Anderson, WhatsApp (73) 99974-3707, placa OZC-9663.
 - Rota: Maion -> Tunait -> Recanto.
 
 ## Como rodar
