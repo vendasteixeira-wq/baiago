@@ -13,6 +13,7 @@ import {
 
 const PRICE_PER_PERSON = 120;
 const DEPOSIT_RATE = 0.5;
+const MIN_PAID_PASSENGERS = 8;
 const VAN_CAPACITY = 15;
 
 const seller = {
@@ -129,6 +130,7 @@ export function App() {
   const passengers = reservations.reduce((sum, reservation) => sum + totalPassengers(reservation), 0);
   const seatsAvailable = Math.max(0, VAN_CAPACITY - passengers);
   const confirmed = reservations.filter((reservation) => reservation.status === "Confirmada").length;
+  const draftBelowMinimum = paidPassengers(draft) < MIN_PAID_PASSENGERS;
   const draftExceedsCapacity = totalPassengers(draft) > VAN_CAPACITY;
 
   const proposal = [
@@ -141,6 +143,8 @@ export function App() {
     `Passageiros: ${totalPassengers(draft)}`,
     `Pagantes: ${paidPassengers(draft)} (adultos e criancas a partir de 6 anos)`,
     `Criancas abaixo de 6 anos: ${draft.childrenFree} gratis`,
+    `Minimo para fechar a saida: ${MIN_PAID_PASSENGERS} pagantes`,
+    `Capacidade da Van ${vehicle.number}: ${VAN_CAPACITY} lugares`,
     `Valor total: ${currency.format(totalValue(draft))}`,
     `Sinal de 50% para confirmar: ${currency.format(depositValue(draft))}`,
     `Saldo restante: ${currency.format(totalValue(draft) - depositValue(draft))}`,
@@ -154,7 +158,7 @@ export function App() {
   }
 
   function addReservation() {
-    if (!form.client.trim() || paidPassengers(draft) < 1 || draftExceedsCapacity) return;
+    if (!form.client.trim() || draftBelowMinimum || draftExceedsCapacity) return;
     setReservations((current) => [{ ...draft, id: Date.now() }, ...current]);
     setForm((current) => ({ ...current, client: "", pickup: "", saleType: "Casal", adults: 2, childrenPaid: 0, childrenFree: 0 }));
   }
@@ -178,8 +182,8 @@ export function App() {
           <p className="eyebrow">Agencia de passeios online</p>
           <h1>Passeio Praia do Espelho saindo de Porto Seguro e Trancoso.</h1>
           <p>
-            Reserve online com a Baiago: venda por pessoa, casal ou familia, sinal de 50%, rota
-            Maion, Tunait e Recanto, e transporte organizado com a Van 15 de 15 lugares.
+            Reserve online com a Baiago: venda para grupos de 8 a 15 pagantes, sinal de 50%,
+            rota Maion, Tunait e Recanto, e transporte organizado com a Van 15.
           </p>
           <div className="hero-actions">
             <a className="primary-button" href="#reserva">
@@ -240,16 +244,18 @@ export function App() {
           <article className="rule-card">
             <h3>Regra comercial</h3>
             <p>
-              A venda pode ser individual, casal ou familia. O preco final continua por pessoa
+              A saida da Van 15 fecha com minimo de {MIN_PAID_PASSENGERS} passageiros pagantes e
+              capacidade maxima de {VAN_CAPACITY} lugares. O preco final continua por pessoa
               pagante: adultos e criancas a partir de 6 anos pagam {currency.format(PRICE_PER_PERSON)}.
-              Criancas abaixo de 6 anos nao pagam. O sinal de 50% confirma a reserva.
+              Criancas abaixo de 6 anos nao pagam, mas ocupam lugar na van. O sinal de 50% confirma
+              a reserva.
             </p>
             <div className="check-list">
               <span>
                 <CheckCircle2 size={17} /> {currency.format(PRICE_PER_PERSON)} por pagante
               </span>
               <span>
-                <CheckCircle2 size={17} /> Venda por pessoa, casal ou familia
+                <CheckCircle2 size={17} /> Saida com minimo de {MIN_PAID_PASSENGERS} pagantes
               </span>
               <span>
                 <CheckCircle2 size={17} /> Abaixo de 6 anos gratis
@@ -258,7 +264,7 @@ export function App() {
                 <CheckCircle2 size={17} /> 50% de sinal
               </span>
               <span>
-                <CheckCircle2 size={17} /> Van 15 com {VAN_CAPACITY} lugares
+                <CheckCircle2 size={17} /> Venda de grupos ate {VAN_CAPACITY} passageiros
               </span>
             </div>
           </article>
@@ -316,7 +322,15 @@ export function App() {
           {draftExceedsCapacity && (
             <p className="capacity-alert">Essa reserva passa dos {VAN_CAPACITY} lugares da Van 15.</p>
           )}
-          <button className="primary-button full" type="button" onClick={addReservation} disabled={draftExceedsCapacity}>
+          {draftBelowMinimum && (
+            <p className="capacity-alert">A saida precisa de pelo menos {MIN_PAID_PASSENGERS} passageiros pagantes.</p>
+          )}
+          <button
+            className="primary-button full"
+            type="button"
+            onClick={addReservation}
+            disabled={draftBelowMinimum || draftExceedsCapacity}
+          >
             <Plus size={18} aria-hidden="true" />
             Salvar reserva
           </button>
@@ -338,6 +352,7 @@ export function App() {
             <div>
               <span>Pagantes</span>
               <strong>{paidPassengers(draft)}</strong>
+              <small>minimo {MIN_PAID_PASSENGERS}</small>
             </div>
             <div>
               <span>Total</span>

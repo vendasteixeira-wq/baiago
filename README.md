@@ -6,7 +6,7 @@ Agencia online de passeios em Porto Seguro, com fluxo de vendedor, cliente, rese
 
 - Passeio: Praia do Espelho.
 - Preco: R$ 120 por pessoa pagante.
-- Tipo de venda: por pessoa, casal ou familia.
+- Tipo de venda: por pessoa, casal ou familia, com saida fechada entre 8 e 15 passageiros pagantes.
 - Crianca abaixo de 6 anos: gratis.
 - Reserva: 50% de sinal.
 - Vendedor: Antonio Teixeira, WhatsApp (73) 99907-2178.
